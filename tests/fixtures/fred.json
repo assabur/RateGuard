@@ -1,0 +1,4 @@
+{"count": 2, "offset": 0, "observations": [
+  {"date": "2025-01-07", "value": ".", "realtime_start": "2025-01-09", "realtime_end": "2025-01-09"},
+  {"date": "2025-01-08", "value": "5.13", "realtime_start": "2025-01-09", "realtime_end": "2025-01-09"}
+]}

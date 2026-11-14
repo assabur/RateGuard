@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: rateguard
+      POSTGRES_DB: rateguard
+      POSTGRES_PASSWORD: ${RATE_GUARD_POSTGRES_PASSWORD:?Set RATE_GUARD_POSTGRES_PASSWORD in .env}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rateguard -d rateguard"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  api:
+    build: .
+    environment:
+      FRED_API_KEY: ${FRED_API_KEY:-}
+      RATE_GUARD_DATABASE_URL: postgresql+psycopg://rateguard:${RATE_GUARD_POSTGRES_PASSWORD}@postgres:5432/rateguard
+      RATE_GUARD_DATA_DIR: /app/data
+      RATE_GUARD_OK_BPS: ${RATE_GUARD_OK_BPS:-2}
+      RATE_GUARD_WARNING_BPS: ${RATE_GUARD_WARNING_BPS:-5}
+      RATE_GUARD_FLAT_BPS: ${RATE_GUARD_FLAT_BPS:-5}
+      RATE_GUARD_MAX_AGE_DAYS: ${RATE_GUARD_MAX_AGE_DAYS:-4}
+      RATE_GUARD_JUMP_BPS: ${RATE_GUARD_JUMP_BPS:-100}
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - market-data:/app/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+volumes:
+  postgres-data:
+  market-data:

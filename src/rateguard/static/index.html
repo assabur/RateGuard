@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RateGuard — Observatoire des taux US</title>
+  <link rel="stylesheet" href="/static/dashboard.css">
+  <script src="/static/dashboard.js" defer></script>
+</head>
+<body>
+  <header><a class="brand" href="/">RateGuard<span>US TREASURY MONITOR</span></a><a href="/docs">Explorer l’API ↗</a></header>
+  <main>
+    <div class="intro"><p class="eyebrow">MARCHÉ OBLIGATAIRE · ÉTATS-UNIS</p><h1>Les taux, sous contrôle.</h1><p>Courbes de rendement, réconciliation Treasury / FRED et qualité des observations.</p></div>
+    <form id="filters" class="panel filters">
+      <label>Source des données<select id="mode"><option value="live">Collectes réelles</option><option value="demo">Démonstration synthétique</option></select></label>
+      <label>Date d’observation<input type="date" id="as-of"><span class="hint">Vide : dernière date disponible</span></label>
+      <button type="submit">Actualiser</button>
+    </form>
+    <p id="message" role="status" aria-live="polite">Chargement…</p>
+    <div id="report" hidden>
+      <div id="notice" class="notice"></div>
+      <section id="metrics" class="metrics" aria-label="Indicateurs du rapport"></section>
+      <div class="charts">
+        <section class="panel"><div class="section-head"><h2>Courbes de rendement</h2><span>Taux en %</span></div><p class="legend"><span class="treasury">● Treasury</span><span class="fred">● FRED</span></p><div id="curve-chart"></div><p class="hint">Maturités positionnées selon leur durée. Les points invalides sont exclus.</p></section>
+        <section class="panel"><div class="section-head"><h2>Écarts entre sources</h2><span>Points de base</span></div><div id="differences"></div><p id="thresholds" class="hint"></p></section>
+      </div>
+      <section class="panel"><h2>Réconciliation par maturité</h2><div class="table-wrap"><table><thead><tr><th>Maturité</th><th>Treasury (%)</th><th>FRED (%)</th><th>Écart (bps)</th><th>Statut</th></tr></thead><tbody id="reconciliation"></tbody></table></div></section>
+      <section class="panel"><h2>Structure des courbes</h2><div id="spreads" class="spread-grid"></div></section>
+      <section class="panel"><h2>Qualité & anomalies</h2><p class="hint">Contrôles de la fenêtre d’observation, anomalies des points courants et erreurs de collecte.</p><ul id="issues"></ul></section>
+      <p id="run-info" class="hint"></p>
+    </div>
+    <section class="panel"><div class="section-head"><h2>Historique des collectes</h2><span>30 dernières exécutions du mode sélectionné</span></div><p class="hint">Sélectionner une exécution pour consulter son rapport précis.</p><div class="table-wrap"><table><thead><tr><th>Date d’observation</th><th>Collecté le</th><th>Statut</th><th>Rapport</th></tr></thead><tbody id="history"></tbody></table></div></section>
+    <footer>RateGuard · Taux en pourcentage, écarts en points de base. <a href="/docs">Documentation API</a></footer>
+  </main>
+</body>
+</html>

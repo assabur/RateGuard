@@ -1,0 +1,33 @@
+name: checks
+on: [push, pull_request]
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.11', '3.13']
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: rateguard
+          POSTGRES_PASSWORD: ci-test-password
+          POSTGRES_DB: rateguard
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U rateguard -d rateguard"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      RATE_GUARD_DATABASE_URL: postgresql+psycopg://rateguard:ci-test-password@127.0.0.1:5432/rateguard
+      RATE_GUARD_TEST_DATABASE_URL: postgresql+psycopg://rateguard:ci-test-password@127.0.0.1:5432/rateguard
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install -e '.[dev]'
+      - run: ruff check .
+      - run: ruff format --check .
+      - run: pytest -q
+      - run: rateguard demo
